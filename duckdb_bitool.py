@@ -277,7 +277,9 @@ if load_btn:
         df_income = preprocess_income(df_income)
 
         # Join bằng DuckDB
-        con = duckdb.connect()
+
+        # dùng in-memory thay vì mặc định (có thể tạo file)
+        con = duckdb.connect(database=":memory:", read_only=False)
         con.register("orders", df_order)
         con.register("income", df_income)
 
