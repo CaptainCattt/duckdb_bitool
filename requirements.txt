@@ -1,8 +1,8 @@
 streamlit
-pandas=
+pandas
 plotly
-duckdb==1.1.3
-pyarrow
-numpy
 openpyxl
 XlsxWriter
+numpy
+duckdb==1.1.3
+pyarrow
