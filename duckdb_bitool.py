@@ -282,17 +282,6 @@ if load_btn:
         con = duckdb.connect(database=":memory:")
         con.register("orders", df_order)
         con.register("income", df_income)
-        result = con.execute(
-            """
-            SELECT o.*, i.Revenue
-            FROM orders o
-            LEFT JOIN income i
-            ON o.OrderID = i.OrderID
-        """
-        ).df()
-        st.dataframe(result)
-    except Exception as e:
-        st.error(f"Lỗi DuckDB: {e}")
         df_joined = con.execute(
             """
             SELECT o.*, i.*
@@ -301,6 +290,9 @@ if load_btn:
                 ON o."Order ID" = i."Related order ID"
         """
         ).fetchdf()
+        st.dataframe(df_joined)
+    except Exception as e:
+        st.error(f"Lỗi DuckDB: {e}")
 
         df_preview = df_joined.head(10)
 
