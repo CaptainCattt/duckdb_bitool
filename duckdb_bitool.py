@@ -278,11 +278,21 @@ if load_btn:
 
         # Join bằng DuckDB
 
-        # dùng in-memory thay vì mặc định (có thể tạo file)
-        con = duckdb.connect(database=":memory:", read_only=False)
+    try:
+        con = duckdb.connect(database=":memory:")
         con.register("orders", df_order)
         con.register("income", df_income)
-
+        result = con.execute(
+            """
+            SELECT o.*, i.Revenue
+            FROM orders o
+            LEFT JOIN income i
+            ON o.OrderID = i.OrderID
+        """
+        ).df()
+        st.dataframe(result)
+    except Exception as e:
+        st.error(f"Lỗi DuckDB: {e}")
         df_joined = con.execute(
             """
             SELECT o.*, i.*
