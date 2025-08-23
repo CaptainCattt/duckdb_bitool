@@ -278,6 +278,8 @@ if load_btn:
 
         # Join bằng DuckDB
 
+    import traceback
+
     try:
         con = duckdb.connect(database=":memory:")
         con.register("orders", df_order)
@@ -293,6 +295,7 @@ if load_btn:
         st.dataframe(df_joined)
     except Exception as e:
         st.error(f"Lỗi DuckDB: {e}")
+        st.code(traceback.format_exc())
 
         df_preview = df_joined.head(10)
 
