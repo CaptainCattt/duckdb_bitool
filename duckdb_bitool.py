@@ -741,16 +741,3 @@ if "sku_monthly" in st.session_state:
 # Đồ thị tổng số lượng bán ra theo SKU Category mỗi tháng
 if "fig_sku_monthly" in st.session_state:
     st.plotly_chart(st.session_state.fig_sku_monthly, use_container_width=True)
-
-if __name__ == "__main__":
-    import streamlit.web.cli as stcli
-    import sys
-
-    sys.argv = [
-        "streamlit",
-        "run",
-        "duckdb_bitool.py",
-        "--server.port=8501",
-        "--server.address=0.0.0.0",
-    ]
-    sys.exit(stcli.main())
