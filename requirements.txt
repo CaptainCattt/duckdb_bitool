@@ -4,5 +4,5 @@ plotly
 openpyxl
 XlsxWriter
 numpy
-duckdb
+duckdb==1.3.2
 pyarrow
