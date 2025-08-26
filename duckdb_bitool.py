@@ -276,28 +276,30 @@ if load_btn:
         df_order = preprocess_order(df_order)
         df_income = preprocess_income(df_income)
 
-        # Join bằng DuckDB
+        # # Join bằng DuckDB
 
-        con = duckdb.connect(database=":memory:")
-        con.register("orders", df_order)
-        con.register("income", df_income)
-        df_joined = duckdb.query(
-            """
-            SELECT o.*, i.*
-            FROM df_order o
-            INNER JOIN df_income i
-                ON o."Order ID" = i."Related order ID"
-        """
-        ).fetchdf()
-        df_preview = df_joined.head(10)
+        # con = duckdb.connect(database=":memory:")
+        # con.register("orders", df_order)
+        # con.register("income", df_income)
+        # df_joined = duckdb.query(
+        #     """
+        #     SELECT o.*, i.*
+        #     FROM df_order o
+        #     INNER JOIN df_income i
+        #         ON o."Order ID" = i."Related order ID"
+        # """
+        # ).fetchdf()
+        # df_preview = df_joined.head(10)
 
         # Lưu session state
         st.session_state.df_order = df_order
         st.session_state.df_income = df_income
-        st.session_state.df_joined = df_joined
-        st.session_state.df_preview = df_preview
-
-        st.success(f"✅ Đã load và join xong, tổng số bản ghi: {len(df_joined):,}")
+        # st.session_state.df_joined = df_joined
+        # st.session_state.df_preview = df_preview
+        st.success(
+            f"✅ Đã load dữ liệu: Orders {len(df_order):,}, Income {len(df_income):,}"
+        )
+        # st.success(f"✅ Đã load và join xong, tổng số bản ghi: {len(df_joined):,}")
     else:
         st.warning("⚠️ Vui lòng upload đủ cả 2 file trước khi load!")
 
@@ -318,6 +320,18 @@ if (
     con = duckdb.connect(database=":memory:")
     con.register("orders", order)
     con.register("income", income)
+
+    # Preview join chỉ lấy 10 bản ghi thôi
+    df_preview = con.execute(
+        """
+        SELECT o."Order ID", o."Created Time", i."Total revenue"
+        FROM orders o
+        INNER JOIN income i
+        ON o."Order ID" = i."Related order ID"
+        LIMIT 10
+    """
+    ).fetchdf()
+    st.dataframe(df_preview)
 
     df_orders_by_month = con.execute(
         """
@@ -646,7 +660,7 @@ if "df_joined" in st.session_state:
 
         if st.button("Xem danh sách"):
             query_ = """
-                SELECT "Actually Order Type", "Type", "Order ID", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time"
+                SELECT "Order ID", "Type", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time"
                 FROM df_joined
                 WHERE "Actually Order Type" = 'Compensation' AND "Type" != 'Order'
                 ORDER BY "Created_Timestamp" 
