@@ -278,9 +278,6 @@ if load_btn:
 
         # Join bằng DuckDB
 
-    import traceback
-
-    try:
         con = duckdb.connect(database=":memory:")
         con.register("orders", df_order)
         con.register("income", df_income)
@@ -291,12 +288,7 @@ if load_btn:
             INNER JOIN df_income i
                 ON o."Order ID" = i."Related order ID"
         """
-        ).to_df()
-        st.dataframe(df_joined)
-    except Exception as e:
-        st.error(f"Lỗi DuckDB: {e}")
-        st.code(traceback.format_exc())
-
+        ).fetchdf()
         df_preview = df_joined.head(10)
 
         # Lưu session state
