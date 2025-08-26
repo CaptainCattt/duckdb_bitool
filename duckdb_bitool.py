@@ -320,14 +320,15 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
     # Preview join chỉ lấy 10 bản ghi thôi
     df_preview = con.execute(
         """
-        SELECT o."Order ID", o."Created Time", i."Total revenue"
+        SELECT  o.*, i.*
         FROM orders o
         INNER JOIN income i
         ON o."Order ID" = i."Related order ID"
         LIMIT 10
     """
     ).fetchdf()
-    st.dataframe(df_preview)
+
+    st.session_state.df_preview = df_preview
 
     df_orders_by_month = con.execute(
         """
