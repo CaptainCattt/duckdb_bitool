@@ -311,7 +311,7 @@ if refresh_btn:
 if "df_order" in st.session_state and "df_income" in st.session_state:
     order = st.session_state.df_order
     income = st.session_state.df_income
-    df_joined = st.session_state.df_joined
+    # df_joined = st.session_state.df_joined
 
     con = duckdb.connect(database=":memory:")
     con.register("orders", order)
