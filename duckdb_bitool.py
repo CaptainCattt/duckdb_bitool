@@ -502,8 +502,8 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
     st.session_state.fig_income_by_month = fig_income_by_month
 
 con = duckdb.connect(database=":memory:")
-con.register("orders", st.session_state.df_order)
-con.register("income", st.session_state.df_income)
+con.register("orders", df_order)
+con.register("income", df_income)
 df_joined = duckdb.query(
     """
     SELECT o.*, i.*
