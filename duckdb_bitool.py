@@ -308,11 +308,7 @@ if refresh_btn:
         del st.session_state[key]
     st.rerun()
 
-if (
-    "df_order" in st.session_state
-    and "df_income" in st.session_state
-    and "df_joined" in st.session_state
-):
+if "df_order" in st.session_state and "df_income" in st.session_state:
     order = st.session_state.df_order
     income = st.session_state.df_income
     df_joined = st.session_state.df_joined
