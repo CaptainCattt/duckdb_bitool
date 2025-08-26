@@ -284,14 +284,14 @@ if load_btn:
         con = duckdb.connect(database=":memory:")
         con.register("orders", df_order)
         con.register("income", df_income)
-        df_joined = con.execute(
+        df_joined = duckdb.query(
             """
             SELECT o.*, i.*
-            FROM orders o
-            INNER JOIN income i
+            FROM df_order o
+            INNER JOIN df_income i
                 ON o."Order ID" = i."Related order ID"
         """
-        ).fetchdf()
+        ).to_df()
         st.dataframe(df_joined)
     except Exception as e:
         st.error(f"Lỗi DuckDB: {e}")
