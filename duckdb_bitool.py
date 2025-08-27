@@ -281,15 +281,15 @@ if load_btn:
         con = duckdb.connect(database=":memory:")
         con.register("orders", df_order)
         con.register("income", df_income)
-        df_joined = duckdb.query(
-            """
-            SELECT o.*, i.*
-            FROM df_order o
-            INNER JOIN df_income i
-                ON o."Order ID" = i."Related order ID"
-        """
-        ).fetchdf()
-        df_preview = df_joined.head(10)
+        # df_joined = duckdb.query(
+        #     """
+        #     SELECT o.*, i.*
+        #     FROM df_order o
+        #     INNER JOIN df_income i
+        #         ON o."Order ID" = i."Related order ID"
+        # """
+        # ).fetchdf()
+        # df_preview = df_joined.head(10)
 
         # Lưu session state
         st.session_state.df_order = df_order
@@ -297,10 +297,10 @@ if load_btn:
 
         # st.session_state.df_joined = df_joined
         # st.session_state.df_preview = df_preview
-        # st.success(
-        #     f"✅ Đã load dữ liệu: Orders {len(df_order):,}, Income {len(df_income):,}"
-        # )
-        st.success(f"✅ Đã load và join xong, tổng số bản ghi: {len(df_joined):,}")
+        st.success(
+            f"✅ Đã load dữ liệu: Orders {len(df_order):,}, Income {len(df_income):,}"
+        )
+        #   st.success(f"✅ Đã load và join xong, tổng số bản ghi: {len(df_joined):,}")
     else:
         st.warning("⚠️ Vui lòng upload đủ cả 2 file trước khi load!")
 
