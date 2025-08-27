@@ -502,16 +502,6 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
 
     st.session_state.fig_income_by_month = fig_income_by_month
 
-# df_joined = st.session_state.get("df_joined", None)
-
-if "df_order" in st.session_state and "df_income" in st.session_state:
-    order = st.session_state.df_order
-    income = st.session_state.df_income
-
-    con = duckdb.connect(database=":memory:")
-    con.register("orders", order)
-    con.register("income", income)
-
     # --- Form tìm kiếm Order ID ---
     with st.sidebar.form("search_order_form"):
         st.write("### 🔍 Tìm kiếm Order ID")
