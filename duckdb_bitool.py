@@ -502,172 +502,194 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
 
     st.session_state.fig_income_by_month = fig_income_by_month
 
-df_joined = st.session_state.get("df_joined", None)
+# df_joined = st.session_state.get("df_joined", None)
 
-# --- Form tìm kiếm Order ID ---
-with st.sidebar.form("search_order_form"):
-    st.write("### 🔍 Tìm kiếm Order ID")
-    order_id = st.text_input("Nhập Order ID:", key="search_order_id")
-    submit_btn = st.form_submit_button("Tìm kiếm")
+if "df_order" in st.session_state and "df_income" in st.session_state:
+    order = st.session_state.df_order
+    income = st.session_state.df_income
 
-    if submit_btn and order_id:
-        query = f"""
-            SELECT *
-            FROM df_joined
-            WHERE "Order ID" = '{order_id}'
-        """
-        df_filtered = con.execute(query).fetchdf()
-        st.session_state.df_search_result = df_filtered
+    con = duckdb.connect(database=":memory:")
+    con.register("orders", order)
+    con.register("income", income)
 
-    if "df_search_result" in st.session_state:
-        df_filtered = st.session_state.df_search_result
-        if not df_filtered.empty:
-            st.success(
-                f"Đã tìm thấy {len(df_filtered)} bản ghi cho Order ID {order_id}"
-            )
-            st.dataframe(df_filtered)
-        else:
-            st.warning(f"Không tìm thấy Order ID {order_id}")
+    # --- Form tìm kiếm Order ID ---
+    with st.sidebar.form("search_order_form"):
+        st.write("### 🔍 Tìm kiếm Order ID")
+        order_id = st.text_input("Nhập Order ID:", key="search_order_id")
+        submit_btn = st.form_submit_button("Tìm kiếm")
 
-# --- Form tìm kiếm theo Tỉnh/Thành ---
-with st.sidebar.form("search_city_form"):
-    st.write("### 🏙️ Tìm kiếm theo Tỉnh/Thành")
-    city = st.text_input("Nhập Tỉnh/Thành:", key="search_city")
-    submit_city_btn = st.form_submit_button("Tìm kiếm")
+        if submit_btn and order_id:
+            query = f"""
+                SELECT *
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE "Order ID" = '{order_id}'
+            """
+            df_filtered = con.execute(query).fetchdf()
+            st.session_state.df_search_result = df_filtered
 
-    if submit_city_btn and city:
-        query = f"""
-            SELECT "Order ID", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time", "Province", "Buyer Username"
-            FROM df_joined
-            WHERE Province ILIKE '%{city}%'
-        """
-        df_filtered_city = con.execute(query).fetchdf()
-        st.session_state.df_city_result = df_filtered_city
+        if "df_search_result" in st.session_state:
+            df_filtered = st.session_state.df_search_result
+            if not df_filtered.empty:
+                st.success(
+                    f"Đã tìm thấy {len(df_filtered)} bản ghi cho Order ID {order_id}"
+                )
+                st.dataframe(df_filtered)
+            else:
+                st.warning(f"Không tìm thấy Order ID {order_id}")
 
-    if "df_city_result" in st.session_state:
-        df_filtered_city = st.session_state.df_city_result
-        if not df_filtered_city.empty:
-            st.success(f"Đã tìm thấy {len(df_filtered_city)} bản ghi tại {city}")
-            st.dataframe(df_filtered_city)
-        else:
-            st.warning(f"Không tìm thấy đơn hàng nào tại {city}")
+    # --- Form tìm kiếm theo Tỉnh/Thành ---
+    with st.sidebar.form("search_city_form"):
+        st.write("### 🏙️ Tìm kiếm theo Tỉnh/Thành")
+        city = st.text_input("Nhập Tỉnh/Thành:", key="search_city")
+        submit_city_btn = st.form_submit_button("Tìm kiếm")
 
-# --- Form tìm kiếm SKU ID ---
-with st.sidebar.form("search_sku_id_form"):
-    st.write("### 🔍 Tìm kiếm SKU ID")
-    sku_id = st.text_input("Nhập SKU ID:", key="search_sku_id")
-    submit_sku_btn = st.form_submit_button("Tìm kiếm")
+        if submit_city_btn and city:
+            query = f"""
+                SELECT "Order ID", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time", "Province", "Buyer Username"
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE Province ILIKE '%{city}%'
+            """
+            df_filtered_city = con.execute(query).fetchdf()
+            st.session_state.df_city_result = df_filtered_city
 
-    if submit_sku_btn and sku_id:
-        query = f"""
-            SELECT "Order ID", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Province", "Buyer Username"
-            FROM df_joined
-            WHERE "SKU ID" = '{sku_id}'
-        """
-        df_filtered_sku = con.execute(query).fetchdf()
-        st.session_state.df_search_result_sku = df_filtered_sku
+        if "df_city_result" in st.session_state:
+            df_filtered_city = st.session_state.df_city_result
+            if not df_filtered_city.empty:
+                st.success(f"Đã tìm thấy {len(df_filtered_city)} bản ghi tại {city}")
+                st.dataframe(df_filtered_city)
+            else:
+                st.warning(f"Không tìm thấy đơn hàng nào tại {city}")
 
-    if "df_search_result_sku" in st.session_state:
-        df_filtered_sku = st.session_state.df_search_result_sku
-        if not df_filtered_sku.empty:
-            st.success(
-                f"Đã tìm thấy {len(df_filtered_sku)} bản ghi cho SKU ID {sku_id}"
-            )
-            st.dataframe(df_filtered_sku)
-        else:
-            st.warning(f"Không tìm thấy SKU ID {sku_id}")
+    # --- Form tìm kiếm SKU ID ---
+    with st.sidebar.form("search_sku_id_form"):
+        st.write("### 🔍 Tìm kiếm SKU ID")
+        sku_id = st.text_input("Nhập SKU ID:", key="search_sku_id")
+        submit_sku_btn = st.form_submit_button("Tìm kiếm")
 
-# --- Form tìm kiếm OrderID từ tên khách hàng ---
-with st.sidebar.form("search_order_id_form_buyer"):
-    st.write("### 🔍 Tìm kiếm Order ID từ tên Người mua")
-    name_buyer = st.text_input("Nhập tên của người mua:", key="search_name_buyer")
-    submit_name_buyer = st.form_submit_button("Tìm kiếm")
+        if submit_sku_btn and sku_id:
+            query = f"""
+                SELECT "Order ID", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Province", "Buyer Username"
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE "SKU ID" = '{sku_id}'
+            """
+            df_filtered_sku = con.execute(query).fetchdf()
+            st.session_state.df_search_result_sku = df_filtered_sku
 
-    if submit_name_buyer and name_buyer:
-        query = f"""
-            SELECT *
-            FROM df_joined
-            WHERE "Buyer Username" = '{name_buyer}'
-        """
-        df_filtered_buyer = con.execute(query).fetchdf()
-        df_filtered_buyer_1 = df_filtered_buyer[
-            [
-                "Order ID",
-                "Order Status",
-                "SKU Category",
-                "Quantity",
-                "Total revenue",
-                "Total settlement amount",
-                "Created Time",
-                "Province",
+        if "df_search_result_sku" in st.session_state:
+            df_filtered_sku = st.session_state.df_search_result_sku
+            if not df_filtered_sku.empty:
+                st.success(
+                    f"Đã tìm thấy {len(df_filtered_sku)} bản ghi cho SKU ID {sku_id}"
+                )
+                st.dataframe(df_filtered_sku)
+            else:
+                st.warning(f"Không tìm thấy SKU ID {sku_id}")
+
+    # --- Form tìm kiếm OrderID từ tên khách hàng ---
+    with st.sidebar.form("search_order_id_form_buyer"):
+        st.write("### 🔍 Tìm kiếm Order ID từ tên Người mua")
+        name_buyer = st.text_input("Nhập tên của người mua:", key="search_name_buyer")
+        submit_name_buyer = st.form_submit_button("Tìm kiếm")
+
+        if submit_name_buyer and name_buyer:
+            query = f"""
+                SELECT *
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE "Buyer Username" = '{name_buyer}'
+            """
+            df_filtered_buyer = con.execute(query).fetchdf()
+            df_filtered_buyer_1 = df_filtered_buyer[
+                [
+                    "Order ID",
+                    "Order Status",
+                    "SKU Category",
+                    "Quantity",
+                    "Total revenue",
+                    "Total settlement amount",
+                    "Created Time",
+                    "Province",
+                ]
             ]
-        ]
-        st.session_state.df_filtered_buyer_1 = df_filtered_buyer_1
+            st.session_state.df_filtered_buyer_1 = df_filtered_buyer_1
 
-    if "df_filtered_buyer_1" in st.session_state:
-        df_filtered_buyer = st.session_state.df_filtered_buyer_1
-        if not df_filtered_buyer.empty:
-            st.success(
-                f"Đã tìm thấy {len(df_filtered_buyer)} bản ghi Order ID cho người mua '{name_buyer}'"
-            )
-            st.dataframe(df_filtered_buyer)
-        else:
-            st.warning(f"Không tìm thấy Order ID của người mua '{name_buyer}'")
+        if "df_filtered_buyer_1" in st.session_state:
+            df_filtered_buyer = st.session_state.df_filtered_buyer_1
+            if not df_filtered_buyer.empty:
+                st.success(
+                    f"Đã tìm thấy {len(df_filtered_buyer)} bản ghi Order ID cho người mua '{name_buyer}'"
+                )
+                st.dataframe(df_filtered_buyer)
+            else:
+                st.warning(f"Không tìm thấy Order ID của người mua '{name_buyer}'")
 
-if "df_joined" in st.session_state:
-    # --- Nút xuất Top 10 người mua ---
-    with st.sidebar:
-        st.write("### 🏆 Top 10 người mua nhiều nhất 🏆")
+    if "df_joined" in st.session_state:
+        # --- Nút xuất Top 10 người mua ---
+        with st.sidebar:
+            st.write("### 🏆 Top 10 người mua nhiều nhất 🏆")
 
-        if st.button("Xem Top 10 người mua"):
-            query_top10_buyer = """
-                SELECT "Buyer Username", COUNT("Order ID") AS "Total orders"
-                FROM df_joined
-                WHERE "Order Status" = 'Completed' AND "Buyer Username" IS NOT NULL
-                GROUP BY "Buyer Username"
-                ORDER BY "Total orders" DESC
-                LIMIT 10
-            """
-            df_top10_buyers = con.execute(query_top10_buyer).fetchdf()
-            st.session_state.df_top10_buyers = df_top10_buyers
-
-            if "df_top10_buyers" in st.session_state:
-                st.dataframe(st.session_state.df_top10_buyers)
-
-    # --- Nút xuất Top 10 tỉnh thành ---
-    with st.sidebar:
-        st.write("### 🏢 Top 10 tỉnh thành mua nhiều nhất 🏢")
-
-        if st.button("Xem Top 10 tỉnh thành"):
-            query_top10_province = """
-                SELECT "Province", COUNT("Order ID") AS "Total orders"
-                FROM df_joined
-                WHERE "Order Status" = 'Completed' AND "Province" IS NOT NULL
-                GROUP BY "Province"
-                ORDER BY "Total orders" DESC
-                LIMIT 10
-            """
-            df_top10_province = con.execute(query_top10_province).fetchdf()
-            st.session_state.df_top10_province = df_top10_province
-            if "df_top10_province" in st.session_state:
-                st.dataframe(st.session_state.df_top10_province)
-
-    # --- Nút xuất danh sách dơn hàng Điều chỉnh ---
-    with st.sidebar:
-        st.write("### ‼️ Danh sách đơn hàng Điều chỉnh ‼️")
-
-        if st.button("Xem danh sách"):
-            query_ = """
-                SELECT "Order ID", "Type", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time"
-                FROM df_joined
-                WHERE "Actually Order Type" = 'Compensation' AND "Type" != 'Order'
-                ORDER BY "Created_Timestamp" 
-                DESC
+            if st.button("Xem Top 10 người mua"):
+                query_top10_buyer = """
+                    SELECT "Buyer Username", COUNT("Order ID") AS "Total orders"
+                    FROM orders o
+                    INNER JOIN income i
+                    ON o."Order ID" = i."Related order ID"
+                    WHERE "Order Status" = 'Completed' AND "Buyer Username" IS NOT NULL
+                    GROUP BY "Buyer Username"
+                    ORDER BY "Total orders" DESC
+                    LIMIT 10
                 """
-            df_ = con.execute(query_).fetchdf()
-            st.session_state.df_ = df_
-            if "df_" in st.session_state:
-                st.dataframe(st.session_state.df_)
+                df_top10_buyers = con.execute(query_top10_buyer).fetchdf()
+                st.session_state.df_top10_buyers = df_top10_buyers
+
+                if "df_top10_buyers" in st.session_state:
+                    st.dataframe(st.session_state.df_top10_buyers)
+
+        # --- Nút xuất Top 10 tỉnh thành ---
+        with st.sidebar:
+            st.write("### 🏢 Top 10 tỉnh thành mua nhiều nhất 🏢")
+
+            if st.button("Xem Top 10 tỉnh thành"):
+                query_top10_province = """
+                    SELECT "Province", COUNT("Order ID") AS "Total orders"
+                    FROM orders o
+                    INNER JOIN income i
+                    ON o."Order ID" = i."Related order ID"
+                    WHERE "Order Status" = 'Completed' AND "Province" IS NOT NULL
+                    GROUP BY "Province"
+                    ORDER BY "Total orders" DESC
+                    LIMIT 10
+                """
+                df_top10_province = con.execute(query_top10_province).fetchdf()
+                st.session_state.df_top10_province = df_top10_province
+                if "df_top10_province" in st.session_state:
+                    st.dataframe(st.session_state.df_top10_province)
+
+        # --- Nút xuất danh sách dơn hàng Điều chỉnh ---
+        with st.sidebar:
+            st.write("### ‼️ Danh sách đơn hàng Điều chỉnh ‼️")
+
+            if st.button("Xem danh sách"):
+                query_ = """
+                    SELECT "Order ID", "Type", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time"
+                    FROM orders o
+                    INNER JOIN income i
+                    ON o."Order ID" = i."Related order ID"
+                    WHERE "Actually Order Type" = 'Compensation' AND "Type" != 'Order'
+                    ORDER BY "Created_Timestamp" 
+                    DESC
+                    """
+                df_ = con.execute(query_).fetchdf()
+                st.session_state.df_ = df_
+                if "df_" in st.session_state:
+                    st.dataframe(st.session_state.df_)
 
 # Hiển thị các kết quả tìm kiếm
 if "df_preview" in st.session_state:
