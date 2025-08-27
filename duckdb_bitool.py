@@ -278,18 +278,18 @@ if load_btn:
 
         # # Join bằng DuckDB
 
-        # con = duckdb.connect(database=":memory:")
-        # con.register("orders", df_order)
-        # con.register("income", df_income)
-        # df_joined = duckdb.query(
-        #     """
-        #     SELECT o.*, i.*
-        #     FROM df_order o
-        #     INNER JOIN df_income i
-        #         ON o."Order ID" = i."Related order ID"
-        # """
-        # ).fetchdf()
-        # df_preview = df_joined.head(10)
+        con = duckdb.connect(database=":memory:")
+        con.register("orders", df_order)
+        con.register("income", df_income)
+        df_joined = duckdb.query(
+            """
+            SELECT o.*, i.*
+            FROM df_order o
+            INNER JOIN df_income i
+                ON o."Order ID" = i."Related order ID"
+        """
+        ).fetchdf()
+        df_preview = df_joined.head(10)
 
         # Lưu session state
         st.session_state.df_order = df_order
@@ -297,10 +297,10 @@ if load_btn:
 
         # st.session_state.df_joined = df_joined
         # st.session_state.df_preview = df_preview
-        st.success(
-            f"✅ Đã load dữ liệu: Orders {len(df_order):,}, Income {len(df_income):,}"
-        )
-        # st.success(f"✅ Đã load và join xong, tổng số bản ghi: {len(df_joined):,}")
+        # st.success(
+        #     f"✅ Đã load dữ liệu: Orders {len(df_order):,}, Income {len(df_income):,}"
+        # )
+        st.success(f"✅ Đã load và join xong, tổng số bản ghi: {len(df_joined):,}")
     else:
         st.warning("⚠️ Vui lòng upload đủ cả 2 file trước khi load!")
 
@@ -319,17 +319,17 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
     con.register("income", income)
 
     # Preview join chỉ lấy 10 bản ghi thôi
-    df_preview = con.execute(
-        """
-        SELECT  o.*, i.*
-        FROM orders o
-        INNER JOIN income i
-        ON o."Order ID" = i."Related order ID"
-        LIMIT 10
-    """
-    ).fetchdf()
+    # df_preview = con.execute(
+    #     """
+    #     SELECT  o.*, i.*
+    #     FROM orders o
+    #     INNER JOIN income i
+    #     ON o."Order ID" = i."Related order ID"
+    #     LIMIT 10
+    # """
+    # ).fetchdf()
 
-    st.session_state.df_preview = df_preview
+    # st.session_state.df_preview = df_preview
 
     df_orders_by_month = con.execute(
         """
@@ -502,21 +502,7 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
 
     st.session_state.fig_income_by_month = fig_income_by_month
 
-if load_btn:
-    con = duckdb.connect(database=":memory:")
-    con.register("orders", st.session_state.df_order)
-    con.register("income", st.session_state.df_income)
-
-    df_joined = con.execute(
-        """
-        SELECT o.*, i.*
-        FROM orders o
-        INNER JOIN income i
-            ON o."Order ID" = i."Related order ID"
-    """
-    ).fetchdf()
-
-    st.session_state.df_joined = df_joined
+df_joined = st.session_state.get("df_joined", None)
 
 # --- Form tìm kiếm Order ID ---
 with st.sidebar.form("search_order_form"):
