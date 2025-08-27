@@ -269,6 +269,9 @@ with col1:
 with col2:
     refresh_btn = st.button("🔄 Refresh data")
 
+# =========================
+st.markdown("<br><br>", unsafe_allow_html=True)
+
 if load_btn:
     if uploaded_file_order and uploaded_file_income:
         # Load parquet vào pandas
