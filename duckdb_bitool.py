@@ -258,7 +258,7 @@ uploaded_file_income = st.file_uploader(
 )
 
 # =========================
-st.markdown("<br><br><br>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 # Chia layout thành 2 cột, nút sẽ nằm 2 đầu
 col1, col_space, col2 = st.columns([1, 2.8, 1])
