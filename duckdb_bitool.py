@@ -319,17 +319,17 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
     con.register("income", income)
 
     # Preview join chỉ lấy 10 bản ghi thôi
-    # df_preview = con.execute(
-    #     """
-    #     SELECT  o.*, i.*
-    #     FROM orders o
-    #     INNER JOIN income i
-    #     ON o."Order ID" = i."Related order ID"
-    #     LIMIT 10
-    # """
-    # ).fetchdf()
+    df_preview = con.execute(
+        """
+        SELECT  o.*, i.*
+        FROM orders o
+        INNER JOIN income i
+        ON o."Order ID" = i."Related order ID"
+        LIMIT 10
+    """
+    ).fetchdf()
 
-    # st.session_state.df_preview = df_preview
+    st.session_state.df_preview = df_preview
 
     df_orders_by_month = con.execute(
         """
