@@ -630,66 +630,65 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
             else:
                 st.warning(f"Không tìm thấy Order ID của người mua '{name_buyer}'")
 
-    if "df_joined" in st.session_state:
-        # --- Nút xuất Top 10 người mua ---
-        with st.sidebar:
-            st.write("### 🏆 Top 10 người mua nhiều nhất 🏆")
+    # --- Nút xuất Top 10 người mua ---
+    with st.sidebar:
+        st.write("### 🏆 Top 10 người mua nhiều nhất 🏆")
 
-            if st.button("Xem Top 10 người mua"):
-                query_top10_buyer = """
-                    SELECT "Buyer Username", COUNT("Order ID") AS "Total orders"
-                    FROM orders o
-                    INNER JOIN income i
-                    ON o."Order ID" = i."Related order ID"
-                    WHERE "Order Status" = 'Completed' AND "Buyer Username" IS NOT NULL
-                    GROUP BY "Buyer Username"
-                    ORDER BY "Total orders" DESC
-                    LIMIT 10
+        if st.button("Xem Top 10 người mua"):
+            query_top10_buyer = """
+                SELECT "Buyer Username", COUNT("Order ID") AS "Total orders"
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE "Order Status" = 'Completed' AND "Buyer Username" IS NOT NULL
+                GROUP BY "Buyer Username"
+                ORDER BY "Total orders" DESC
+                LIMIT 10
+            """
+            df_top10_buyers = con.execute(query_top10_buyer).fetchdf()
+            st.session_state.df_top10_buyers = df_top10_buyers
+
+            if "df_top10_buyers" in st.session_state:
+                st.dataframe(st.session_state.df_top10_buyers)
+
+    # --- Nút xuất Top 10 tỉnh thành ---
+    with st.sidebar:
+        st.write("### 🏢 Top 10 tỉnh thành mua nhiều nhất 🏢")
+
+        if st.button("Xem Top 10 tỉnh thành"):
+            query_top10_province = """
+                SELECT "Province", COUNT("Order ID") AS "Total orders"
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE "Order Status" = 'Completed' AND "Province" IS NOT NULL
+                GROUP BY "Province"
+                ORDER BY "Total orders" DESC
+                LIMIT 10
+            """
+            df_top10_province = con.execute(query_top10_province).fetchdf()
+            st.session_state.df_top10_province = df_top10_province
+            if "df_top10_province" in st.session_state:
+                st.dataframe(st.session_state.df_top10_province)
+
+    # --- Nút xuất danh sách dơn hàng Điều chỉnh ---
+    with st.sidebar:
+        st.write("### ‼️ Danh sách đơn hàng Điều chỉnh ‼️")
+
+        if st.button("Xem danh sách"):
+            query_ = """
+                SELECT "Order ID", "Type", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time"
+                FROM orders o
+                INNER JOIN income i
+                ON o."Order ID" = i."Related order ID"
+                WHERE "Actually Order Type" = 'Compensation' AND "Type" != 'Order'
+                ORDER BY "Created_Timestamp" 
+                DESC
                 """
-                df_top10_buyers = con.execute(query_top10_buyer).fetchdf()
-                st.session_state.df_top10_buyers = df_top10_buyers
-
-                if "df_top10_buyers" in st.session_state:
-                    st.dataframe(st.session_state.df_top10_buyers)
-
-        # --- Nút xuất Top 10 tỉnh thành ---
-        with st.sidebar:
-            st.write("### 🏢 Top 10 tỉnh thành mua nhiều nhất 🏢")
-
-            if st.button("Xem Top 10 tỉnh thành"):
-                query_top10_province = """
-                    SELECT "Province", COUNT("Order ID") AS "Total orders"
-                    FROM orders o
-                    INNER JOIN income i
-                    ON o."Order ID" = i."Related order ID"
-                    WHERE "Order Status" = 'Completed' AND "Province" IS NOT NULL
-                    GROUP BY "Province"
-                    ORDER BY "Total orders" DESC
-                    LIMIT 10
-                """
-                df_top10_province = con.execute(query_top10_province).fetchdf()
-                st.session_state.df_top10_province = df_top10_province
-                if "df_top10_province" in st.session_state:
-                    st.dataframe(st.session_state.df_top10_province)
-
-        # --- Nút xuất danh sách dơn hàng Điều chỉnh ---
-        with st.sidebar:
-            st.write("### ‼️ Danh sách đơn hàng Điều chỉnh ‼️")
-
-            if st.button("Xem danh sách"):
-                query_ = """
-                    SELECT "Order ID", "Type", "Order Status", "SKU Category", "Quantity", "Total revenue", "Total settlement amount", "Created Time"
-                    FROM orders o
-                    INNER JOIN income i
-                    ON o."Order ID" = i."Related order ID"
-                    WHERE "Actually Order Type" = 'Compensation' AND "Type" != 'Order'
-                    ORDER BY "Created_Timestamp" 
-                    DESC
-                    """
-                df_ = con.execute(query_).fetchdf()
-                st.session_state.df_ = df_
-                if "df_" in st.session_state:
-                    st.dataframe(st.session_state.df_)
+            df_ = con.execute(query_).fetchdf()
+            st.session_state.df_ = df_
+            if "df_" in st.session_state:
+                st.dataframe(st.session_state.df_)
 
 # Hiển thị các kết quả tìm kiếm
 if "df_preview" in st.session_state:
