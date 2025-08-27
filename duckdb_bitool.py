@@ -257,6 +257,9 @@ uploaded_file_income = st.file_uploader(
     "Upload file TikTok Income (.parquet)", type=["parquet"]
 )
 
+# =========================
+st.markdown("<br><br><br>", unsafe_allow_html=True)
+
 # Chia layout thành 2 cột, nút sẽ nằm 2 đầu
 col1, col_space, col2 = st.columns([1, 2.8, 1])
 
