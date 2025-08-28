@@ -261,7 +261,7 @@ uploaded_file_income = st.file_uploader(
 st.markdown("<br><br>", unsafe_allow_html=True)
 
 # Chia layout thành 2 cột, nút sẽ nằm 2 đầu
-col1, col_space, col2 = st.columns([1, 2.8, 1])
+col1, col_space, col2 = st.columns([1, 2.5, 1])
 
 with col1:
     load_btn = st.button("🔎 Load data")
