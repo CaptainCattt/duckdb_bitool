@@ -599,7 +599,7 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
                 FROM orders o
                 INNER JOIN income i
                 ON o."Order ID" = i."Related order ID"
-                WHERE "Order Status" = 'Completed' AND "Buyer Username" = '{name_buyer}'
+                WHERE "Buyer Username" = '{name_buyer}'
             """
             df_filtered_buyer = con.execute(query).fetchdf()
             df_filtered_buyer_1 = df_filtered_buyer[
