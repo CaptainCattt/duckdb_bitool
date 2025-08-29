@@ -8,6 +8,9 @@ import duckdb
 # Fuctions cần thiết
 # ========================
 
+# 🔺 Đặt lệnh set_page_config ở dòng đầu tiên
+st.set_page_config(page_title="Dashboard TikTok BI Tool", layout="wide")
+
 
 def clean_columns(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     for col in cols:
