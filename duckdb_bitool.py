@@ -595,13 +595,15 @@ if "df_order" in st.session_state and "df_income" in st.session_state:
         if st.button("Xem phân tích"):
             query_2 = """
                 SELECT o."Product Name", 
+                        o."Seller SKU",
                         o."SKU Category",
+                        
                     COUNT(DISTINCT o."Order ID") AS "Số đơn hàng",
                     SUM(i."Total revenue") AS "Doanh thu",
                     SUM(CASE WHEN o."Cancelation/Return Type" = 'Return/Refund' THEN 1 ELSE 0 END) AS "Số đơn hoàn trả",
                 FROM orders o
                 JOIN income i ON o."Order ID" = i."Related order ID"
-                GROUP BY o."Product Name", o."SKU Category"
+                GROUP BY o."Product Name", o."Seller SKU", o."SKU Category"
                 ORDER BY "Doanh thu" DESC
 
                 """
