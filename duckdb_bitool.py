@@ -360,8 +360,6 @@ if not st.session_state.logged_in:
         check_login(username, password)
 
 if st.session_state.logged_in:
-    st.success(f"👋 Chào mừng {st.session_state.username}!")
-
     # Khởi tạo session_state mặc định
     for key, val in {
         "auto_load_done": False,
@@ -373,59 +371,91 @@ if st.session_state.logged_in:
         if key not in st.session_state:
             st.session_state[key] = val
 
+    if st.session_state.logged_in:
+        st.success(f"👋 Chào mừng {st.session_state.username}!")
+
+        # =========================
+        # Khởi tạo session_state mặc định
+        # =========================
+        for key, val in {
+            "auto_load_done": False,
+            "df_order_drive": None,
+            "df_income_drive": None,
+            "is_loading": False,
+            "load_refresh_type": None,
+        }.items():
+            if key not in st.session_state:
+                st.session_state[key] = val
+
+        # =========================
+        # Container cố định cho nút / spinner
+        # =========================
+        btn_container = st.container()
+
+        # =========================
+        # Hàm tải dữ liệu
+        # =========================
+        def load_data(refresh=False):
+            action_text = "Refresh" if refresh else "Load"
+            spinner_text = f"⏳ {action_text} dữ liệu từ Google Drive..."
+            success_text = f"✅ {action_text} dữ liệu thành công!"
+
+            with btn_container:
+                with st.spinner(spinner_text):
+                    try:
+                        order_df = download_parquet_from_drive("ALL_data_tiktok.parquet") \
+                            if refresh or st.session_state.df_order_drive is None else st.session_state.df_order_drive
+                        income_df = download_parquet_from_drive("INCOME_all_data_tiktok.parquet") \
+                            if refresh or st.session_state.df_income_drive is None else st.session_state.df_income_drive
+
+                        if order_df is not None and income_df is not None:
+                            # Lưu dữ liệu
+                            st.session_state.df_order_drive = order_df
+                            st.session_state.df_income_drive = income_df
+                            st.session_state.df_order = preprocess_order(
+                                order_df)
+                            st.session_state.df_income = preprocess_income(
+                                income_df)
+
+                            # Kết nối DuckDB
+                            con = duckdb.connect(database=":memory:")
+                            con.register("orders", st.session_state.df_order)
+                            con.register("income", st.session_state.df_income)
+
+                            st.info(
+                                f"{success_text}\n\n"
+                                f"📦 Orders: {len(st.session_state.df_order):,}\n"
+                                f"💰 Income: {len(st.session_state.df_income):,}\n"
+                                f"🕒 Cập nhật: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                            )
+                        else:
+                            st.warning("⚠️ Không tìm thấy dữ liệu từ Drive!")
+                    except Exception as e:
+                        st.error(f"❌ Lỗi khi load dữ liệu: {e}")
+
+            st.session_state.is_loading = False
+            st.session_state.auto_load_done = True
+
     # =========================
-    # Nút Load / Refresh
+    # Tự động load lần đầu sau khi login
     # =========================
     if not st.session_state.auto_load_done and not st.session_state.is_loading:
         st.session_state.is_loading = True
-        st.session_state.load_refresh_type = "load"
+        load_data(refresh=False)
 
     # =========================
-    # Nút Load / Refresh (luôn hiển thị)
+    # Hiển thị nút thao tác
     # =========================
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🔎 Load data", key="btn_load", use_container_width=True):
-            st.session_state.load_refresh_type = "load"
-            st.session_state.is_loading = True
-    with col2:
-        if st.button("🔄 Refresh data", key="btn_refresh", use_container_width=True):
-            st.session_state.load_refresh_type = "refresh"
-            st.session_state.is_loading = True
-
-    if st.session_state.is_loading:
-        action_text = "Refresh" if st.session_state.load_refresh_type == "refresh" else "Load"
-        with st.spinner(f"⏳ {action_text} dữ liệu từ Google Drive..."):
-            try:
-                refresh = st.session_state.load_refresh_type == "refresh"
-                order_df = download_parquet_from_drive("ALL_data_tiktok.parquet") \
-                    if refresh or st.session_state.df_order_drive is None else st.session_state.df_order_drive
-                income_df = download_parquet_from_drive("INCOME_all_data_tiktok.parquet") \
-                    if refresh or st.session_state.df_income_drive is None else st.session_state.df_income_drive
-
-                if order_df is not None and income_df is not None:
-                    st.session_state.df_order_drive = order_df
-                    st.session_state.df_income_drive = income_df
-                    st.session_state.df_order = preprocess_order(order_df)
-                    st.session_state.df_income = preprocess_income(income_df)
-
-                    con = duckdb.connect(database=":memory:")
-                    con.register("orders", st.session_state.df_order)
-                    con.register("income", st.session_state.df_income)
-
-                    st.success(
-                        f"✅ {action_text} dữ liệu thành công!\n\n"
-                        f"📦 Orders: {len(st.session_state.df_order):,}\n"
-                        f"💰 Income: {len(st.session_state.df_income):,}\n"
-                        f"🕒 Cập nhật: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}"
-                    )
-                else:
-                    st.warning("⚠️ Không tìm thấy dữ liệu từ Drive!")
-            except Exception as e:
-                st.error(f"❌ Lỗi khi load dữ liệu: {e}")
-            finally:
-                st.session_state.is_loading = True
-                st.session_state.auto_load_done = True
+    with btn_container:
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔎 Load data", use_container_width=True):
+                st.session_state.load_refresh_type = "load"
+                load_data(refresh=False)
+        with col2:
+            if st.button("🔄 Refresh data", use_container_width=True):
+                st.session_state.load_refresh_type = "refresh"
+                load_data(refresh=True)
 
     # =========================
     # Lấy dữ liệu để sử dụng
