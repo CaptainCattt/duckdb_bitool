@@ -6,3 +6,8 @@ XlsxWriter
 numpy
 duckdb==1.3.2
 pyarrow
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+pydrive2
