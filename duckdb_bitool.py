@@ -150,6 +150,24 @@ def preprocess_order(df: pd.DataFrame) -> pd.DataFrame:
         "Yen Bai": "Yên Bái",
         "Dien Bien": "Điện Biên",
         "Tien Giang": "Tiền Giang",
+        "Kien Giang Province": "Kiên Giang",
+        "Soc Trang Province": "Sóc Trăng",
+        "Bac Lieu Province": "Bạc Liêu",
+        "Binh Thuan Province": " Bình Thuận",
+        "Thai Binh Province": "Thái Bình",
+        "Ninh Thuan Province": "Ninh Thuận",
+        "An Giang Province": "An Giang",
+        "Province de Nam Dinh": "Nam Định",
+        "Thanh Hoa Province": "Thanh Hóa",
+        "Phu Yen Province": "Phú Yên",
+        "Tay Ninh Province": "Tây Ninh",
+        "Hai Phong City": "hải Phòng",
+        "Provinz Dak Lak": "Đắk Lắk",
+        "Ba Ria – Vung Tau Province": "Bà Rịa - Vũng Tàu",
+        "Province de Hau Giang": "Hậu Giang",
+        "Provinz Binh Thuan": "Bình Thuận",
+
+
     }
     df["Province"] = df["Province"].replace(province_mapping)
 
