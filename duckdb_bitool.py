@@ -376,20 +376,23 @@ if st.session_state.logged_in:
     # =========================
     # Nút Load / Refresh
     # =========================
-    if not st.session_state.is_loading and not st.session_state.auto_load_done:
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔎 Load data", key="btn_load", use_container_width=True):
-                st.session_state.load_refresh_type = "load"
-                st.session_state.is_loading = True
-        with col2:
-            if st.button("🔄 Refresh data", key="btn_refresh", use_container_width=True):
-                st.session_state.load_refresh_type = "refresh"
-                st.session_state.is_loading = True
+    if not st.session_state.auto_load_done and not st.session_state.is_loading:
+        st.session_state.is_loading = True
+        st.session_state.load_refresh_type = "load"
 
     # =========================
-    # Spinner khi đang load
+    # Nút Load / Refresh (luôn hiển thị)
     # =========================
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🔎 Load data", key="btn_load", use_container_width=True):
+            st.session_state.load_refresh_type = "load"
+            st.session_state.is_loading = True
+    with col2:
+        if st.button("🔄 Refresh data", key="btn_refresh", use_container_width=True):
+            st.session_state.load_refresh_type = "refresh"
+            st.session_state.is_loading = True
+
     if st.session_state.is_loading:
         action_text = "Refresh" if st.session_state.load_refresh_type == "refresh" else "Load"
         with st.spinner(f"⏳ {action_text} dữ liệu từ Google Drive..."):
@@ -421,14 +424,8 @@ if st.session_state.logged_in:
             except Exception as e:
                 st.error(f"❌ Lỗi khi load dữ liệu: {e}")
             finally:
-                st.session_state.is_loading = False
+                st.session_state.is_loading = True
                 st.session_state.auto_load_done = True
-
-    # =========================
-    # Thông báo nếu đã load
-    # =========================
-    if st.session_state.auto_load_done and not st.session_state.is_loading:
-        st.info("✅ Dữ liệu đã được load.")
 
     # =========================
     # Lấy dữ liệu để sử dụng
