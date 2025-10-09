@@ -142,7 +142,7 @@ def preprocess_order(df: pd.DataFrame) -> pd.DataFrame:
         "Ha Giang": "Hà Giang",
         "Lam Dong": "Lâm Đồng",
         "Lao Cai": "Lào Cai",
-        "Phu Tho": "Phu Tho",
+        "Phu Tho": "Phú Thọ",
         "Phu Yen": "Phú Yên",
         "Thai Nguyen": "Thái Nguyên",
         "Son La": "Sơn La",
@@ -166,6 +166,12 @@ def preprocess_order(df: pd.DataFrame) -> pd.DataFrame:
         "Ba Ria – Vung Tau Province": "Bà Rịa - Vũng Tàu",
         "Province de Hau Giang": "Hậu Giang",
         "Provinz Binh Thuan": "Bình Thuận",
+        "Tien Giang Province": "Tiền Giang",
+        "Lang Son": "Lạng Sơn",
+        "Can Tho City": "Cần Thơ",
+        "Bac Kan": "Bắc Kạn",
+
+
 
 
     }
