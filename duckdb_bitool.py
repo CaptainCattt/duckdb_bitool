@@ -419,6 +419,7 @@ if st.session_state.logged_in:
         # =========================
         # Hàm tải dữ liệu
         # =========================
+        @st.cache_resource
         def load_data(refresh=False):
 
             action_text = "Refresh" if refresh else "Load"
