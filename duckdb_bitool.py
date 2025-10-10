@@ -420,9 +420,7 @@ if st.session_state.logged_in:
         # Hàm tải dữ liệu
         # =========================
         def load_data(refresh=False):
-            if st.session_state.get("is_loading", False):
-                st.warning("⏳ Đang tải dữ liệu, vui lòng đợi...")
-                st.stop()
+
             action_text = "Refresh" if refresh else "Load"
             spinner_text = f"⏳ {action_text} dữ liệu từ Google Drive..."
             success_text = f"✅ {action_text} dữ liệu thành công!"
