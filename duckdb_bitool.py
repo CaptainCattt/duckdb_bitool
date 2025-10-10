@@ -485,12 +485,6 @@ if st.session_state.logged_in:
                 load_data(refresh=True)
 
     # =========================
-    # Lấy dữ liệu để sử dụng
-    # =========================
-    order_df = st.session_state.df_order_drive
-    income_df = st.session_state.df_income_drive
-
-    # =========================
 
     if "df_order" in st.session_state and "df_income" in st.session_state:
         order = st.session_state.df_order
@@ -500,21 +494,6 @@ if st.session_state.logged_in:
         con = duckdb.connect(database=":memory:")
         con.register("orders", order)
         con.register("income", income)
-
-        # Preview join chỉ lấy 10 bản ghi thôi
-        df_preview = con.execute(
-            """
-            SELECT  o.*, i.*
-            FROM orders o
-            INNER JOIN income i
-            ON o."Order ID" = i."Related order ID"
-            ORDER BY o."Created Time" ASC
-            LIMIT 10
-
-        """
-        ).fetchdf()
-
-        st.session_state.df_preview = df_preview
 
         df_orders_by_month = con.execute(
             """
@@ -942,18 +921,6 @@ if st.session_state.logged_in:
                 else:
                     st.warning(
                         f"Không tìm thấy Order ID của người mua '{name_buyer}'")
-
-    # Hiển thị các kết quả tìm kiếm
-    if "df_preview" in st.session_state:
-        st.markdown(
-            "<h2 style='text-align: center; font-size: 28px; '>📅 Thông tin một số đơn hàng gần nhất 📅</h2>",
-            unsafe_allow_html=True,
-        )
-
-        st.dataframe(st.session_state.df_preview)
-
-    # =========================
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
 
     # Đon hàng theo tháng
     if "df_orders_by_month" in st.session_state:
