@@ -462,6 +462,29 @@ if st.session_state.logged_in:
             st.session_state.is_loading = False
             st.session_state.auto_load_done = True
 
+    # =========================
+    # Tự động load lần đầu sau khi login
+    # =========================
+    if not st.session_state.auto_load_done and not st.session_state.is_loading:
+        st.session_state.is_loading = True
+        load_data(refresh=False)
+
+    # # =========================
+    # # Hiển thị nút thao tác
+    # # =========================
+    # with btn_container:
+    #     col1, col2 = st.columns(2)
+    #     with col1:
+    #         if st.button("🔎 Load data", use_container_width=True):
+    #             st.session_state.load_refresh_type = "load"
+    #             load_data(refresh=False)
+    #     with col2:
+    #         if st.button("🔄 Refresh data", use_container_width=True):
+    #             st.session_state.load_refresh_type = "refresh"
+    #             load_data(refresh=True)
+
+    # =========================
+
     if "df_order" in st.session_state and "df_income" in st.session_state:
         order = st.session_state.df_order
         income = st.session_state.df_income
