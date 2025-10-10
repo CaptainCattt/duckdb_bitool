@@ -384,45 +384,16 @@ if not st.session_state.logged_in:
         check_login(username, password)
 
 if st.session_state.logged_in:
-    # # Khởi tạo session_state mặc định
-    # for key, val in {
-    #     "auto_load_done": False,
-    #     "df_order_drive": None,
-    #     "df_income_drive": None,
-    #     "is_loading": False,
-    #     "load_refresh_type": "load"
-    # }.items():
-    #     if key not in st.session_state:
-    #         st.session_state[key] = val
+    with st.sidebar:
+        if st.button("🧹 Reset App"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.cache_data.clear()
+            st.cache_resource.clear()
+            st.rerun()
 
-    # if st.session_state.logged_in:
-    #     st.success(f"👋 Chào mừng {st.session_state.username}!")
-
-    #     # =========================
-    #     # Khởi tạo session_state mặc định
-    #     # =========================
-    #     for key, val in {
-    #         "auto_load_done": False,
-    #         "df_order_drive": None,
-    #         "df_income_drive": None,
-    #         "is_loading": False,
-    #         "load_refresh_type": None,
-    #     }.items():
-    #         if key not in st.session_state:
-    #             st.session_state[key] = val
-
-    #     # =========================
-    #     # Container cố định cho nút / spinner
-    #     # =========================
-    #     btn_container = st.container()
-
-    #     # =========================
-    #     # Hàm tải dữ liệu
-    #     # =========================
     @st.cache_resource
     def load_shared_data():
-        st.info("⏳ Đang tải dữ liệu từ Google Drive, vui lòng đợi...")
-
         order_df = download_parquet_from_drive("ALL_data_tiktok.parquet")
         income_df = download_parquet_from_drive(
             "INCOME_all_data_tiktok.parquet")
