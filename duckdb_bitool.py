@@ -715,7 +715,6 @@ if st.session_state.logged_in:
 
     with st.sidebar:
         st.write("### 📦 Phân tích sản phẩm 📦")
-
         if st.button("Xem phân tích"):
             query_2 = """
                 SELECT o."Product Name",
@@ -737,6 +736,36 @@ if st.session_state.logged_in:
             st.session_state.df_2 = df_2
             if "df_2" in st.session_state:
                 st.dataframe(st.session_state.df_2)
+
+    with st.sidebar:
+        st.write("### ‼️ Tổng đơn lỗi ‼️")
+        if st.button("Xem tổng đơn lỗi"):
+            query_3 = """
+                SELECT
+                    strftime('%Y-%m', CAST(Created_Timestamp AS DATE)) AS 'Tháng',
+                    COUNT(*) AS 'Tổng đơn lỗi'
+                FROM orders
+                WHERE "Order Substatus" = 'Error Order'
+                GROUP BY strftime('%Y-%m', CAST(Created_Timestamp AS DATE))
+                ORDER BY Tháng
+                """
+            df_3 = con.execute(query_3).fetchdf()
+            st.session_state.df_3 = df_3
+            if "df_3" in st.session_state:
+                st.dataframe(st.session_state.df_3)
+
+    with st.sidebar:
+        st.write("### 📝 Danh sách đơn lỗi 📝")
+        if st.button("Xem danh sách đơn lỗi"):
+            query_4 = """
+                SELECT *
+                FROM orders
+                WHERE "Order Substatus" = 'Error Order'
+                """
+            df_4 = con.execute(query_4).fetchdf()
+            st.session_state.df_4 = df_4
+            if "df_4" in st.session_state:
+                st.dataframe(st.session_state.df_4)
 
     # --- Form tìm kiếm Order ID ---
     with st.sidebar.form("search_order_form"):
