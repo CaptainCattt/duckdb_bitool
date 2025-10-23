@@ -655,64 +655,57 @@ if st.session_state.logged_in:
     # --- Vẽ biểu đồ ---
     fig = go.Figure()
 
-    # 🎨 Cột: Lượt xem trang
+    # Cột: Lượt xem trang
     fig.add_trace(go.Bar(
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt xem trang"],
         name="Lượt xem trang",
-        marker_color='#1E90FF',
+        marker_color="dodgerblue",
         opacity=0.8,
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
-        textposition='outside'
+        textposition="outside"
     ))
 
-    # 🔵 Đường: Lượt truy cập trang Cửa hàng
+    # Đường: Lượt truy cập trang Cửa hàng
     fig.add_trace(go.Scatter(
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt truy cập trang Cửa hàng"],
         name="Lượt truy cập trang Cửa hàng",
-        mode='lines+markers+text',
-        line=dict(color='#004AAD', width=3),
-        marker=dict(size=8, color='#002D72'),
-        yaxis='y2',
+        mode="lines+markers+text",
+        line=dict(color="royalblue", width=3),
+        marker=dict(size=8),
+        yaxis="y2",
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt truy cập trang Cửa hàng"]],
         textposition="top center"
     ))
 
-    # ✨ Layout (phiên bản an toàn, không dùng dict lồng quá sâu)
+    # --- Layout ---
     fig.update_layout(
         title="📊 Tổng quan lưu lượng truy cập theo tháng",
-        title_x=0.5,
-        title_font=dict(size=20, color="#002D72"),
         xaxis_title="Tháng",
         yaxis_title="Lượt xem trang",
         yaxis=dict(
-            titlefont=dict(color="#1E90FF"),
-            tickfont=dict(color="#1E90FF"),
-            tickformat=",.0f"
+            showgrid=False
         ),
         yaxis2=dict(
             title="Lượt truy cập trang Cửa hàng",
-            titlefont=dict(color="#004AAD"),
-            tickfont=dict(color="#004AAD"),
-            tickformat=",.0f",
             overlaying="y",
-            side="right"
+            side="right",
+            showgrid=False
         ),
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.05,
+            y=1.1,
+            x=0.5,
             xanchor="center",
-            x=0.5
+            yanchor="bottom"
         ),
         template="plotly_white",
-        hovermode="x unified",
         bargap=0.25,
-        margin=dict(l=60, r=60, t=80, b=80)
+        hovermode="x unified"
     )
 
-    # --- Lưu biểu đồ vào session_state ---
+    # --- Lưu biểu đồ ---
     st.session_state["traffic_chart"] = fig
 
     # --- Nút xuất Top 10 người mua ---
