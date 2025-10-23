@@ -684,23 +684,17 @@ if st.session_state.logged_in:
 
     # --- Layout tổng thể ---
     fig.update_layout(
-        title=dict(
-            text="📊 Tổng quan lưu lượng truy cập theo tháng",
-            x=0.5,
-            xanchor="center",
-            font=dict(size=20, color="royalblue", family="Arial Black")
-        ),
         xaxis=dict(
             title="Tháng",
             tickangle=-30,
             tickfont=dict(size=12),
             showline=True,
-            linecolor="blue",
+            linecolor="red",
         ),
         yaxis=dict(
             title="Lượt xem trang",
             showgrid=True,
-            gridcolor="rgba(0,0,0,0.05)",
+            gridcolor="blue",
             zeroline=False
         ),
         yaxis2=dict(
