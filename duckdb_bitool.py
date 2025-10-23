@@ -660,50 +660,41 @@ if st.session_state.logged_in:
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt xem trang"],
         name="Lượt xem trang",
-        marker_color='#1E90FF',  # Màu xanh dương đậm
+        marker_color='#1E90FF',
         opacity=0.8,
-        text=overview_by_month["Lượt xem trang"].apply(lambda x: f"{x:,.0f}"),
+        text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
         textposition='outside'
     ))
 
-    # 🔴 Đường: Lượt truy cập trang Cửa hàng
+    # 🔵 Đường: Lượt truy cập trang Cửa hàng
     fig.add_trace(go.Scatter(
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt truy cập trang Cửa hàng"],
         name="Lượt truy cập trang Cửa hàng",
         mode='lines+markers+text',
-        line=dict(color='#0066CC', width=3),  # xanh đậm hơn
-        marker=dict(size=8, color='#003366'),
-        yaxis="y2",
-        text=overview_by_month["Lượt truy cập trang Cửa hàng"].apply(
-            lambda x: f"{x:,.0f}"),
+        line=dict(color='#004AAD', width=3),
+        marker=dict(size=8, color='#002D72'),
+        yaxis='y2',
+        text=[f"{x:,.0f}" for x in overview_by_month["Lượt truy cập trang Cửa hàng"]],
         textposition="top center"
     ))
 
-    # ✨ Layout chuyên nghiệp
+    # ✨ Layout (phiên bản an toàn, không dùng dict lồng quá sâu)
     fig.update_layout(
-        title=dict(
-            text="📊 Tổng quan lưu lượng truy cập theo tháng",
-            font=dict(size=20, color="#003366"),
-            x=0.5,  # căn giữa
-            xanchor='center'
-        ),
-        xaxis=dict(
-            title="Tháng",
-            tickangle=-45,
-            showgrid=False,
-            tickfont=dict(size=12)
-        ),
+        title="📊 Tổng quan lưu lượng truy cập theo tháng",
+        title_x=0.5,
+        title_font=dict(size=20, color="#002D72"),
+        xaxis_title="Tháng",
+        yaxis_title="Lượt xem trang",
         yaxis=dict(
-            title="Lượt xem trang",
             titlefont=dict(color="#1E90FF"),
             tickfont=dict(color="#1E90FF"),
-            tickformat=",.0f"  # format số có dấu phẩy
+            tickformat=",.0f"
         ),
         yaxis2=dict(
             title="Lượt truy cập trang Cửa hàng",
-            titlefont=dict(color="#0066CC"),
-            tickfont=dict(color="#0066CC"),
+            titlefont=dict(color="#004AAD"),
+            tickfont=dict(color="#004AAD"),
             tickformat=",.0f",
             overlaying="y",
             side="right"
@@ -711,23 +702,18 @@ if st.session_state.logged_in:
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.02,
+            y=1.05,
             xanchor="center",
-            x=0.5,
-            font=dict(size=12)
+            x=0.5
         ),
         template="plotly_white",
         hovermode="x unified",
-        margin=dict(l=60, r=60, t=80, b=80),
-        bargap=0.25
+        bargap=0.25,
+        margin=dict(l=60, r=60, t=80, b=80)
     )
 
     # --- Lưu biểu đồ vào session_state ---
     st.session_state["traffic_chart"] = fig
-
-    # --- Hiển thị ---
-    st.plotly_chart(
-        st.session_state["traffic_chart"], use_container_width=True)
 
     # --- Nút xuất Top 10 người mua ---
     with st.sidebar:
