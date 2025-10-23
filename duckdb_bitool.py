@@ -665,23 +665,21 @@ if st.session_state.logged_in:
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
         textposition="outside",
         textfont=dict(size=11, color="black"),
-        offsetgroup=0
+        offsetgroup=0,
+        hovertemplate="<b>Tháng:</b> %{x}<br>👁️ Lượt xem trang: %{y:,.0f}<extra></extra>"
     ))
 
-    # 🔹 Đường: Lượt truy cập trang Cửa hàng
+    # 🔹 Đường: Khách truy cập
     fig.add_trace(go.Scatter(
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt truy cập trang Cửa hàng"],
-        name="Lượt truy cập trang Cửa hàng",
-        mode="lines+markers+text",
+        name="Khách truy cập",
+        mode="lines+markers",
         line=dict(color="royalblue", width=3),
         marker=dict(size=8, color="royalblue",
                     line=dict(width=1, color="white")),
         yaxis="y2",
-        text=[f"{x:,.0f}" for x in overview_by_month["Lượt truy cập trang Cửa hàng"]],
-        textposition="top center",
-        textfont=dict(size=11, color="royalblue"),
-        offsetgroup=1
+        hovertemplate="👥 Khách truy cập: %{y:,.0f}<extra></extra>"
     ))
 
     # --- Layout tổng thể ---
@@ -697,7 +695,7 @@ if st.session_state.logged_in:
             tickangle=-30,
             tickfont=dict(size=12),
             showline=True,
-            linecolor="lightgray"
+            linecolor="lightgray",
         ),
         yaxis=dict(
             title="Lượt xem trang",
@@ -706,7 +704,7 @@ if st.session_state.logged_in:
             zeroline=False
         ),
         yaxis2=dict(
-            title="Lượt truy cập trang Cửa hàng",
+            title="Khách truy cập",
             overlaying="y",
             side="right",
             showgrid=False
@@ -720,7 +718,12 @@ if st.session_state.logged_in:
             yanchor="bottom",
             font=dict(size=12)
         ),
-        hovermode="x unified",
+        hovermode="x unified",  # Gộp tooltip theo trục X
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=13,
+            font_family="Arial"
+        ),
         template="plotly_white",
         margin=dict(l=60, r=60, t=90, b=60)
     )
