@@ -1007,7 +1007,7 @@ if "fig_income_by_month" in st.session_state:
                     use_container_width=True)
 
 # lưu lượng truy cập đồ thi
-if "chart_fig" in st.session_state:
+if "traffic_chart" in st.session_state:
     st.markdown(
         "<h2 style='text-align: center; font-size: 28px; '>📈 Lưu lượng truy cập 📈</h2>",
         unsafe_allow_html=True,
