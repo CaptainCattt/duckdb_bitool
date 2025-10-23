@@ -660,7 +660,7 @@ if st.session_state.logged_in:
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt xem trang"],
         name="Lượt xem trang",
-        marker_color="blue",
+        marker_color="#64B5F6",
         opacity=0.85,
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
         textposition="outside",
@@ -676,7 +676,7 @@ if st.session_state.logged_in:
         name="Khách truy cập",
         mode="lines+markers",
         line=dict(color="red", width=3),
-        marker=dict(size=8, color="red",
+        marker=dict(size=8, color="#E53935",
                     line=dict(width=1, color="white")),
         yaxis="y2",
         hovertemplate="👥 Khách truy cập: %{y:,.0f}<extra></extra>"
