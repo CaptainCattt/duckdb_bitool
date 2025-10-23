@@ -649,34 +649,45 @@ if st.session_state.logged_in:
         """
     ).fetchdf()
 
-    import matplotlib.pyplot as plt
+    import plotly.graph_objects as go
     import streamlit as st
 
     # --- Vẽ biểu đồ ---
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    fig = go.Figure()
 
-    ax1.bar(overview_by_month["Tháng"], overview_by_month["Lượt xem trang"],
-            label="Lượt xem trang", alpha=0.7, color='skyblue')
+    fig.add_trace(go.Bar(
+        x=overview_by_month["Tháng"],
+        y=overview_by_month["Lượt xem trang"],
+        name="Lượt xem trang",
+        marker_color='skyblue',
+        opacity=0.7
+    ))
 
-    ax2 = ax1.twinx()
-    ax2.plot(overview_by_month["Tháng"], overview_by_month["Lượt truy cập trang Cửa hàng"],
-             color='red', marker='o', label="Lượt truy cập trang Cửa hàng")
+    fig.add_trace(go.Scatter(
+        x=overview_by_month["Tháng"],
+        y=overview_by_month["Lượt truy cập trang Cửa hàng"],
+        name="Lượt truy cập trang Cửa hàng",
+        mode='lines+markers',
+        line=dict(color='red', width=3),
+        marker=dict(size=8),
+        yaxis="y2"
+    ))
 
-    ax1.set_title("📊 Tổng quan lưu lượng truy cập theo tháng",
-                  fontsize=14, fontweight="bold")
-    ax1.set_xlabel("Tháng")
-    ax1.set_ylabel("Lượt xem trang")
-    ax2.set_ylabel("Lượt truy cập trang Cửa hàng", color='red')
+    fig.update_layout(
+        title="📊 Tổng quan lưu lượng truy cập theo tháng",
+        xaxis=dict(title="Tháng"),
+        yaxis=dict(title="Lượt xem trang"),
+        yaxis2=dict(
+            title="Lượt truy cập trang Cửa hàng",
+            overlaying="y",
+            side="right"
+        ),
+        template="plotly_white",
+        hovermode="x unified"
+    )
 
-    plt.xticks(rotation=45)
-    lines, labels = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines + lines2, labels + labels2, loc="upper left")
-
-    plt.tight_layout()
-
-    # --- ✅ Lưu chart vào session ---
-    st.session_state.chart_fig = fig
+    # --- Lưu biểu đồ vào session_state ---
+    st.session_state["traffic_chart"] = fig
 
     # --- Nút xuất Top 10 người mua ---
     with st.sidebar:
@@ -1001,7 +1012,8 @@ if "chart_fig" in st.session_state:
         "<h2 style='text-align: center; font-size: 28px; '>📈 Lưu lượng truy cập 📈</h2>",
         unsafe_allow_html=True,
     )
-    st.pyplot(st.session_state.chart_fig)
+    st.plotly_chart(
+        st.session_state["traffic_chart"], use_container_width=True)
 
 # Tổng số lượng bán ra theo SKU
 if "sku_summary" in st.session_state:
