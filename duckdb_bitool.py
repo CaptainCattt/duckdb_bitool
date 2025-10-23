@@ -397,10 +397,11 @@ if st.session_state.logged_in:
         order_df = download_parquet_from_drive("ALL_data_tiktok.parquet")
         income_df = download_parquet_from_drive(
             "INCOME_all_data_tiktok.parquet")
+        overview_df = download_parquet_from_drive("Overview_full.parquet")
 
-        if order_df is None or income_df is None:
+        if order_df is None or income_df is None or overview_df is None:
             st.warning("⚠️ Không tìm thấy dữ liệu từ Drive!")
-            return None, None
+            return None, None, None
 
         order_df = preprocess_order(order_df)
         income_df = preprocess_income(income_df)
@@ -411,26 +412,28 @@ if st.session_state.logged_in:
             f"💰 Income: {len(income_df):,}\n"
             f"🕒 Cập nhật: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
-        return order_df, income_df
+        return order_df, income_df, overview_df
 
     # =========================
     # Tự động load lần đầu sau khi login
     # =========================
     st.success(f"👋 Chào mừng {st.session_state.username}!")
 
-    order_df, income_df = load_shared_data()
+    order_df, income_df, overview_df = load_shared_data()
 
-    if order_df is None or income_df is None:
+    if order_df is None or income_df is None or overview_df is None:
         st.stop()
 
     # Dữ liệu này chỉ là reference, không copy => tiết kiệm RAM
     st.session_state.df_order = order_df
     st.session_state.df_income = income_df
+    st.session_state.df_overview = overview_df
 
     # Kết nối DuckDB trong session hiện tại
     con = duckdb.connect(database=":memory:")
     con.register("orders", order_df)
     con.register("income", income_df)
+    con.register("overview", overview_df)
 
     # # =========================
     # # Hiển thị nút thao tác
