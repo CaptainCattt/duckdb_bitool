@@ -660,7 +660,7 @@ if st.session_state.logged_in:
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt xem trang"],
         name="Lượt xem trang",
-        marker_color="deepskyblue",
+        marker_color="blue",
         opacity=0.85,
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
         textposition="outside",
@@ -675,8 +675,8 @@ if st.session_state.logged_in:
         y=overview_by_month["Lượt truy cập trang Cửa hàng"],
         name="Khách truy cập",
         mode="lines+markers",
-        line=dict(color="royalblue", width=3),
-        marker=dict(size=8, color="royalblue",
+        line=dict(color="red", width=3),
+        marker=dict(size=8, color="red",
                     line=dict(width=1, color="white")),
         yaxis="y2",
         hovertemplate="👥 Khách truy cập: %{y:,.0f}<extra></extra>"
@@ -689,12 +689,12 @@ if st.session_state.logged_in:
             tickangle=-30,
             tickfont=dict(size=12),
             showline=True,
-            linecolor="red",
+            linecolor="blue",
         ),
         yaxis=dict(
             title="Lượt xem trang",
             showgrid=True,
-            gridcolor="blue",
+            gridcolor="rgba(0,0,0,0.05)",
             zeroline=False
         ),
         yaxis2=dict(
