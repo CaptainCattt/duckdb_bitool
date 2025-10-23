@@ -655,37 +655,55 @@ if st.session_state.logged_in:
     # --- Vẽ biểu đồ ---
     fig = go.Figure()
 
-    # Cột: Lượt xem trang
+    # 🔹 Cột: Lượt xem trang
     fig.add_trace(go.Bar(
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt xem trang"],
         name="Lượt xem trang",
-        marker_color="dodgerblue",
-        opacity=0.8,
+        marker_color="deepskyblue",
+        opacity=0.85,
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
-        textposition="outside"
+        textposition="outside",
+        textfont=dict(size=11, color="black"),
+        offsetgroup=0
     ))
 
-    # Đường: Lượt truy cập trang Cửa hàng
+    # 🔹 Đường: Lượt truy cập trang Cửa hàng
     fig.add_trace(go.Scatter(
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt truy cập trang Cửa hàng"],
         name="Lượt truy cập trang Cửa hàng",
         mode="lines+markers+text",
         line=dict(color="royalblue", width=3),
-        marker=dict(size=8),
+        marker=dict(size=8, color="royalblue",
+                    line=dict(width=1, color="white")),
         yaxis="y2",
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt truy cập trang Cửa hàng"]],
-        textposition="top center"
+        textposition="top center",
+        textfont=dict(size=11, color="royalblue"),
+        offsetgroup=1
     ))
 
-    # --- Layout ---
+    # --- Layout tổng thể ---
     fig.update_layout(
-        title="📊 Tổng quan lưu lượng truy cập theo tháng",
-        xaxis_title="Tháng",
-        yaxis_title="Lượt xem trang",
+        title=dict(
+            text="📊 Tổng quan lưu lượng truy cập theo tháng",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=20, color="royalblue", family="Arial Black")
+        ),
+        xaxis=dict(
+            title="Tháng",
+            tickangle=-30,
+            tickfont=dict(size=12),
+            showline=True,
+            linecolor="lightgray"
+        ),
         yaxis=dict(
-            showgrid=False
+            title="Lượt xem trang",
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.05)",
+            zeroline=False
         ),
         yaxis2=dict(
             title="Lượt truy cập trang Cửa hàng",
@@ -693,16 +711,18 @@ if st.session_state.logged_in:
             side="right",
             showgrid=False
         ),
+        bargap=0.25,
         legend=dict(
             orientation="h",
             y=1.1,
             x=0.5,
             xanchor="center",
-            yanchor="bottom"
+            yanchor="bottom",
+            font=dict(size=12)
         ),
+        hovermode="x unified",
         template="plotly_white",
-        bargap=0.25,
-        hovermode="x unified"
+        margin=dict(l=60, r=60, t=90, b=60)
     )
 
     # --- Lưu biểu đồ ---
