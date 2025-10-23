@@ -695,7 +695,7 @@ if st.session_state.logged_in:
             tickangle=-30,
             tickfont=dict(size=12),
             showline=True,
-            linecolor="lightgray",
+            linecolor="blue",
         ),
         yaxis=dict(
             title="Lượt xem trang",
