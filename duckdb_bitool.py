@@ -660,7 +660,7 @@ if st.session_state.logged_in:
         x=overview_by_month["Tháng"],
         y=overview_by_month["Lượt xem trang"],
         name="Lượt xem trang",
-        marker_color="#64B5F6",
+        marker_color="#ffd280",
         opacity=0.85,
         text=[f"{x:,.0f}" for x in overview_by_month["Lượt xem trang"]],
         textposition="outside",
